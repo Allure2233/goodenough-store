@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>古德因纳夫商城 - 管理后台</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>◆ 古德因纳夫商城</h1>
+                <p>管理后台</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>数据概览</span>
+                </a>
+                <a href="#products" class="nav-item" data-page="products">
+                    <span class="nav-icon">📦</span>
+                    <span>商品管理</span>
+                </a>
+                <a href="#orders" class="nav-item" data-page="orders">
+                    <span class="nav-icon">🛒</span>
+                    <span>订单管理</span>
+                </a>
+                <a href="#users" class="nav-item" data-page="users">
+                    <span class="nav-icon">👥</span>
+                    <span>用户管理</span>
+                </a>
+                <a href="#settings" class="nav-item" data-page="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span>系统设置</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn-logout">
+                    <span>🚪</span> 退出登录
+                </button>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 顶部栏 -->
+            <header class="top-bar">
+                <div class="page-title">
+                    <h2 id="pageTitle">数据概览</h2>
+                </div>
+                <div class="user-info">
+                    <span class="user-name">管理员</span>
+                    <button class="btn-icon">🔔</button>
+                </div>
+            </header>
+
+            <!-- 页面内容 -->
+            <div class="page-content">
+                <!-- 数据概览页面 -->
+                <section id="dashboard-page" class="page active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📦</div>
+                            <div class="stat-info">
+                                <span class="stat-number" data-target="156">0</span>
+                                <span class="stat-label">商品总数</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🛒</div>
+                            <div class="stat-info">
+                                <span class="stat-number" data-target="1289">0</span>
+                                <span class="stat-label">订单总数</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div class="stat-info">
+                                <span class="stat-number" data-target="342">0</span>
+                                <span class="stat-label">用户总数</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <span class="stat-number" data-target="89500">0</span>
+                                <span class="stat-label">销售总额(元)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <h3>销售趋势</h3>
+                        <div class="chart-placeholder">
+                            <p>📈 近30天销售数据图表</p>
+                        </div>
+                    </div>
+
+                    <div class="recent-section">
+                        <h3>最新订单</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>订单号</th>
+                                    <th>用户</th>
+                                    <th>金额</th>
+                                    <th>状态</th>
+                                    <th>时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrders">
+                                <tr>
+                                    <td>ORD123456789</td>
+                                    <td>test</td>
+                                    <td>¥599</td>
+                                    <td><span class="badge badge-success">已完成</span></td>
+                                    <td>2024-01-01</td>
+                                    <td><button class="btn-sm">查看</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 商品管理页面 -->
+                <section id="products-page" class="page">
+                    <div class="page-header">
+                        <div class="search-box">
+                            <input type="text" placeholder="搜索商品..." id="productSearch">
+                            <button>🔍</button>
+                        </div>
+                        <button class="btn-primary" id="addProductBtn">
+                            <span>➕</span> 添加商品
+                        </button>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox"></th>
+                                <th>商品</th>
+                                <th>分类</th>
+                                <th>价格</th>
+                                <th>库存</th>
+                                <th>销量</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productList">
+                            <!-- 商品列表将通过JS动态加载 -->
+                        </tbody>
+                    </table>
+
+                    <div class="pagination">
+                        <button class="btn-page">«</button>
+                        <button class="btn-page active">1</button>
+                        <button class="btn-page">2</button>
+                        <button class="btn-page">3</button>
+                        <button class="btn-page">»</button>
+                    </div>
+                </section>
+
+                <!-- 订单管理页面 -->
+                <section id="orders-page" class="page">
+                    <div class="page-header">
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" data-filter="all">全部</button>
+                            <button class="filter-tab" data-filter="pending">待支付</button>
+                            <button class="filter-tab" data-filter="paid">已支付</button>
+                            <button class="filter-tab" data-filter="shipped">已发货</button>
+                            <button class="filter-tab" data-filter="delivered">已完成</button>
+                        </div>
+                        <input type="text" placeholder="搜索订单号..." class="search-input">
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>订单号</th>
+                                <th>用户</th>
+                                <th>商品</th>
+                                <th>金额</th>
+                                <th>状态</th>
+                                <th>时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderList">
+                            <!-- 订单列表将通过JS动态加载 -->
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- 用户管理页面 -->
+                <section id="users-page" class="page">
+                    <div class="page-header">
+                        <div class="search-box">
+                            <input type="text" placeholder="搜索用户...">
+                            <button>🔍</button>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>用户名</th>
+                                <th>邮箱</th>
+                                <th>角色</th>
+                                <th>注册时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userList">
+                            <tr>
+                                <td>1</td>
+                                <td>admin</td>
+                                <td>admin@goodenough.com</td>
+                                <td><span class="badge badge-primary">管理员</span></td>
+                                <td>2024-01-01</td>
+                                <td><span class="badge badge-success">正常</span></td>
+                                <td>
+                                    <button class="btn-sm">编辑</button>
+                                    <button class="btn-sm btn-danger">禁用</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- 系统设置页面 -->
+                <section id="settings-page" class="page">
+                    <div class="settings-section">
+                        <h3>基本信息</h3>
+                        <form class="settings-form">
+                            <div class="form-group">
+                                <label>网站名称</label>
+                                <input type="text" value="古德因纳夫商城">
+                            </div>
+                            <div class="form-group">
+                                <label>网站描述</label>
+                                <textarea>现代化电商平台</textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">保存设置</button>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加商品模态框 -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>添加商品</h3>
+                <button class="modal-close" onclick="closeProductModal()">×</button>
+            </div>
+            <form class="modal-body" id="productForm">
+                <div class="form-group">
+                    <label>商品名称 *</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label>系列名称 *</label>
+                    <input type="text" name="series" required>
+                </div>
+                <div class="form-group">
+                    <label>商品分类 *</label>
+                    <select name="category" required>
+                        <option value="">请选择</option>
+                        <option value="clothing">服饰</option>
+                        <option value="accessories">配饰</option>
+                        <option value="digital">数码</option>
+                        <option value="home">家居</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>价格 *</label>
+                        <input type="number" name="price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>原价</label>
+                        <input type="number" name="originalPrice">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>库存 *</label>
+                        <input type="number" name="stock" required>
+                    </div>
+                    <div class="form-group">
+                        <label>图片URL *</label>
+                        <input type="text" name="images" required placeholder="https://...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>商品描述</label>
+                    <textarea name="description"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProductModal()">取消</button>
+                    <button type="submit" class="btn-primary">确认添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 页面导航
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const page = this.dataset.page;
+                
+                // 更新导航状态
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 更新页面显示
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(`${page}-page`).classList.add('active');
+                
+                // 更新标题
+                const titles = {
+                    dashboard: '数据概览',
+                    products: '商品管理',
+                    orders: '订单管理',
+                    users: '用户管理',
+                    settings: '系统设置'
+                };
+                document.getElementById('pageTitle').textContent = titles[page] || page;
+            });
+        });
+
+        // 数字动画
+        function animateNumbers() {
+            document.querySelectorAll('.stat-number').forEach(num => {
+                const target = parseInt(num.dataset.target);
+                const duration = 2000;
+                const step = target / (duration / 16);
+                let current = 0;
+                
+                const timer = setInterval(() => {
+                    current += step;
+                    if (current >= target) {
+                        num.textContent = target.toLocaleString();
+                        clearInterval(timer);
+                    } else {
+                        num.textContent = Math.floor(current).toLocaleString();
+                    }
+                }, 16);
+            });
+        }
+
+        // 初始加载动画
+        setTimeout(animateNumbers, 500);
+
+        // 添加商品模态框
+        document.getElementById('addProductBtn').addEventListener('click', function() {
+            document.getElementById('productModal').classList.add('active');
+        });
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.remove('active');
+            document.getElementById('productForm').reset();
+        }
+
+        // 商品表单提交
+        document.getElementById('productForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/api/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    alert('商品添加成功');
+                    closeProductModal();
+                    loadProducts();
+                } else {
+                    alert(result.message || '添加失败');
+                }
+            } catch (error) {
+                console.error('添加商品失败:', error);
+                alert('添加失败，请稍后重试');
+            }
+        });
+
+        // 加载商品列表
+        async function loadProducts() {
+            try {
+                const response = await fetch('/api/products/admin/all?limit=50', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    }
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    renderProductList(result.data.products);
+                }
+            } catch (error) {
+                console.error('加载商品失败:', error);
+            }
+        }
+
+        function renderProductList(products) {
+            const tbody = document.getElementById('productList');
+            tbody.innerHTML = products.map(p => `
+                <tr>
+                    <td><input type="checkbox"></td>
+                    <td class="product-cell">
+                        <img src="${p.images[0]}" alt="${p.name}" class="product-thumb">
+                        <span>${p.name}</span>
+                    </td>
+                    <td>${getCategoryName(p.category)}</td>
+                    <td>¥${p.price}</td>
+                    <td>${p.stock}</td>
+                    <td>${p.sales}</td>
+                    <td>
+                        <span class="badge ${p.isActive ? 'badge-success' : 'badge-danger'}">
+                            ${p.isActive ? '上架' : '下架'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-sm">编辑</button>
+                        <button class="btn-sm btn-danger">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                clothing: '服饰',
+                accessories: '配饰',
+                digital: '数码',
+                home: '家居'
+            };
+            return names[category] || category;
+        }
+
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('adminToken');
+            window.location.href = '/';
+        });
+
+        // 初始加载
+        loadProducts();
+    </script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="古德因纳夫商城，精选服饰、数码、家居与配饰。">
+    <meta name="theme-color" content="#f4f2ec">
+    <title>古德因纳夫商城 | GOOD ENOUGH</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="announcement">
+        <span>本周精选</span>
+        <p>满 300 元免运费，新用户使用 <strong>NEW10</strong> 立减 10%</p>
+        <a href="#catalog">开始选购</a>
+    </div>
+
+    <header class="site-header" id="siteHeader">
+        <div class="header-inner">
+            <a class="brand" href="#home" aria-label="古德因纳夫商城首页">
+                <span class="brand-mark" aria-hidden="true">GE</span>
+                <span class="brand-copy">
+                    <strong>古德因纳夫</strong>
+                    <small>GOOD ENOUGH STORE</small>
+                </span>
+            </a>
+
+            <nav class="desktop-nav" aria-label="主导航">
+                <a href="#catalog">全部商品</a>
+                <a href="#edit">本周编辑</a>
+                <a href="#service">购物保障</a>
+            </nav>
+
+            <div class="header-actions">
+                <div class="header-auth" id="headerAuth"></div>
+                <button class="icon-button" id="searchToggle" type="button" aria-label="搜索商品" title="搜索商品">
+                    <i data-lucide="search"></i>
+                </button>
+                <button class="icon-button" id="ordersToggle" type="button" aria-label="我的订单" title="我的订单">
+                    <i data-lucide="package"></i>
+                    <span class="status-dot hidden" id="orderDot"></span>
+                </button>
+                <button class="icon-button" id="cartToggle" type="button" aria-label="购物车" title="购物车">
+                    <i data-lucide="shopping-bag"></i>
+                    <span class="count-badge" id="cartCount">0</span>
+                </button>
+                <button class="icon-button menu-toggle" id="menuToggle" type="button" aria-label="打开菜单" title="菜单">
+                    <i data-lucide="menu"></i>
+                </button>
+            </div>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="#catalog">全部商品</a>
+            <a href="#edit">本周编辑</a>
+            <a href="#service">购物保障</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" id="home">
+            <div class="hero-media">
+                <img id="heroImage" alt="现代家居空间中的精选生活好物">
+                <div class="hero-shade"></div>
+            </div>
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <p class="eyebrow">2026 / 08 EDIT</p>
+                    <h1>古德因纳夫商城</h1>
+                    <p class="hero-lead">不追求更多，只挑选真正值得留下的日常物件。</p>
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="#catalog">
+                            浏览本期精选
+                            <i data-lucide="arrow-down-right"></i>
+                        </a>
+                        <button class="button button-secondary" type="button" data-category-jump="digital">
+                            查看数码新品
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-note">
+                    <span>EDITOR'S NOTE</span>
+                    <p>从材质、耐用度与日常使用感出发，选出 12 件本周推荐。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="service-strip" id="service" aria-label="购物保障">
+            <div>
+                <i data-lucide="shield-check"></i>
+                <span><strong>正品保障</strong><small>官方渠道与严格质检</small></span>
+            </div>
+            <div>
+                <i data-lucide="truck"></i>
+                <span><strong>快速发货</strong><small>现货订单 24 小时内出库</small></span>
+            </div>
+            <div>
+                <i data-lucide="rotate-ccw"></i>
+                <span><strong>无忧退换</strong><small>签收后 7 天内可申请</small></span>
+            </div>
+            <div>
+                <i data-lucide="headphones"></i>
+                <span><strong>在线服务</strong><small>工作日 09:00-18:00</small></span>
+            </div>
+        </section>
+
+        <section class="catalog-section" id="catalog">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow dark">CURATED GOODS</p>
+                    <h2>本周精选好物</h2>
+                </div>
+                <p>按真实使用场景筛选，每件商品都提供明确的材质、规格与库存信息。</p>
+            </div>
+
+            <div class="catalog-toolbar">
+                <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="商品分类">
+                    <button class="category-tab active" type="button" data-category="all">全部</button>
+                    <button class="category-tab" type="button" data-category="clothing">服饰</button>
+                    <button class="category-tab" type="button" data-category="digital">数码</button>
+                    <button class="category-tab" type="button" data-category="home">家居</button>
+                    <button class="category-tab" type="button" data-category="accessories">配饰</button>
+                </div>
+                <div class="toolbar-actions">
+                    <label class="inline-search">
+                        <i data-lucide="search"></i>
+                        <input id="catalogSearch" type="search" placeholder="搜索商品" aria-label="搜索商品">
+                    </label>
+                    <label class="sort-select">
+                        <span class="sr-only">商品排序</span>
+                        <select id="sortSelect">
+                            <option value="featured">推荐排序</option>
+                            <option value="sales">销量优先</option>
+                            <option value="rating">评分优先</option>
+                            <option value="price-asc">价格从低到高</option>
+                            <option value="price-desc">价格从高到低</option>
+                        </select>
+                        <i data-lucide="chevron-down"></i>
+                    </label>
+                    <button class="favorite-filter" id="favoriteFilter" type="button" aria-pressed="false">
+                        <i data-lucide="heart"></i>
+                        收藏
+                    </button>
+                </div>
+            </div>
+
+            <div class="catalog-meta">
+                <span id="resultCount">0 件商品</span>
+                <button id="clearFilters" class="text-button hidden" type="button">清除筛选</button>
+            </div>
+
+            <div class="product-grid" id="productGrid" aria-live="polite"></div>
+
+            <div class="empty-state hidden" id="emptyState">
+                <i data-lucide="search-x"></i>
+                <h3>没有找到对应商品</h3>
+                <p>换个关键词或分类再看看。</p>
+                <button class="button button-dark" id="emptyReset" type="button">查看全部商品</button>
+            </div>
+
+            <div class="load-more-wrap">
+                <button class="button button-outline" id="loadMore" type="button">
+                    查看更多
+                    <i data-lucide="plus"></i>
+                </button>
+            </div>
+        </section>
+
+        <section class="editorial" id="edit">
+            <div class="editorial-image">
+                <img id="editorialImage" alt="桌面上的耳机、灯具与随身物件">
+            </div>
+            <div class="editorial-copy">
+                <p class="eyebrow dark">WEEKLY EDIT 032</p>
+                <h2>让日常物件<br>各得其所</h2>
+                <p>我们偏爱结构清晰、触感诚实的设计。它们不喧哗，却能让每一次使用都更顺手。</p>
+                <dl>
+                    <div><dt>12</dt><dd>本周入选</dd></div>
+                    <div><dt>4.8</dt><dd>平均评分</dd></div>
+                    <div><dt>7 日</dt><dd>无忧退换</dd></div>
+                </dl>
+                <button class="button button-dark" type="button" data-category-jump="home">
+                    选购家居好物
+                    <i data-lucide="arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <section class="newsletter">
+            <div>
+                <p class="eyebrow">GOOD NEWS, ONCE A WEEK</p>
+                <h2>每周一封精选清单</h2>
+            </div>
+            <form id="newsletterForm">
+                <label>
+                    <span class="sr-only">邮箱地址</span>
+                    <input id="newsletterEmail" type="email" placeholder="name@example.com" required>
+                </label>
+                <button class="button button-light" type="submit">订阅</button>
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>
+                <a class="brand footer-brand" href="#home">
+                    <span class="brand-mark" aria-hidden="true">GE</span>
+                    <span class="brand-copy"><strong>古德因纳夫</strong><small>GOOD ENOUGH STORE</small></span>
+                </a>
+                <p>为长期使用而挑选，为真实生活而设计。</p>
+            </div>
+            <div class="footer-links">
+                <div><strong>购物</strong><a href="#catalog">全部商品</a><a href="#service">配送与退换</a></div>
+                <div><strong>帮助</strong><a href="mailto:support@goodenough.local">联系客服</a><button type="button" id="footerOrders">订单查询</button></div>
+                <div><strong>营业时间</strong><span>周一至周五</span><span>09:00-18:00</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 GOOD ENOUGH STORE</span><span>价格均含税</span></div>
+    </footer>
+
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+    <aside class="drawer cart-drawer" id="cartDrawer" aria-hidden="true" aria-label="购物车">
+        <div class="drawer-header">
+            <div><p>SHOPPING BAG</p><h2>购物车 <span id="drawerCartCount">0</span></h2></div>
+            <button class="icon-button drawer-close" type="button" data-close-drawer aria-label="关闭购物车"><i data-lucide="x"></i></button>
+        </div>
+        <div class="shipping-progress" id="shippingProgress">
+            <div><span id="shippingMessage">再选购 ¥300 即可免运费</span><strong id="shippingPercent">0%</strong></div>
+            <div class="progress-track"><span id="shippingBar"></span></div>
+        </div>
+        <div class="drawer-body" id="cartBody"></div>
+        <div class="cart-summary" id="cartSummary">
+            <div class="coupon-row">
+                <input id="couponInput" type="text" placeholder="优惠码">
+                <button type="button" id="couponApply">使用</button>
+            </div>
+            <p class="coupon-feedback" id="couponFeedback"></p>
+            <div class="price-line"><span>商品小计</span><span id="cartSubtotal">¥0</span></div>
+            <div class="price-line"><span>运费</span><span id="shippingFee">¥0</span></div>
+            <div class="price-line discount-line hidden" id="discountLine"><span>优惠</span><span id="discountValue">-¥0</span></div>
+            <div class="price-line total-line"><strong>合计</strong><strong id="cartTotal">¥0</strong></div>
+            <button class="button button-dark checkout-button" id="checkoutButton" type="button">
+                去结算
+                <i data-lucide="arrow-right"></i>
+            </button>
+            <small>提交订单即表示同意本站服务条款</small>
+        </div>
+    </aside>
+
+    <aside class="drawer orders-drawer" id="ordersDrawer" aria-hidden="true" aria-label="我的订单">
+        <div class="drawer-header">
+            <div><p>ORDER HISTORY</p><h2>我的订单</h2></div>
+            <button class="icon-button drawer-close" type="button" data-close-drawer aria-label="关闭订单"><i data-lucide="x"></i></button>
+        </div>
+        <div class="drawer-body orders-body" id="ordersBody"></div>
+    </aside>
+
+    <div class="modal-backdrop" id="productModal" aria-hidden="true">
+        <section class="product-modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+            <button class="icon-button modal-close" type="button" data-close-modal aria-label="关闭商品详情"><i data-lucide="x"></i></button>
+            <div class="detail-media"><img id="detailImage" alt=""></div>
+            <div class="detail-content">
+                <p class="eyebrow dark" id="detailCategory"></p>
+                <h2 id="detailTitle"></h2>
+                <div class="detail-rating"><span id="detailRating"></span><span id="detailReviews"></span></div>
+                <div class="detail-price"><strong id="detailPrice"></strong><del id="detailOriginal"></del></div>
+                <p class="detail-description" id="detailDescription"></p>
+                <dl class="detail-specs" id="detailSpecs"></dl>
+                <div class="detail-purchase">
+                    <div class="stepper" aria-label="商品数量">
+                        <button type="button" id="detailMinus" aria-label="减少数量"><i data-lucide="minus"></i></button>
+                        <input id="detailQuantity" type="number" min="1" max="10" value="1" aria-label="数量">
+                        <button type="button" id="detailPlus" aria-label="增加数量"><i data-lucide="plus"></i></button>
+                    </div>
+                    <button class="button button-dark" id="detailAdd" type="button">
+                        加入购物车
+                        <i data-lucide="shopping-bag"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-backdrop" id="checkoutModal" aria-hidden="true">
+        <section class="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+            <button class="icon-button modal-close" type="button" data-close-modal aria-label="关闭结算"><i data-lucide="x"></i></button>
+            <div class="checkout-heading">
+                <p class="eyebrow dark">SECURE CHECKOUT</p>
+                <h2 id="checkoutTitle">确认收货与支付</h2>
+            </div>
+            <form id="checkoutForm">
+                <div class="checkout-layout">
+                    <div class="checkout-fields">
+                        <fieldset>
+                            <legend>收货信息</legend>
+                            <div class="form-grid">
+                                <label><span>收货人</span><input name="name" autocomplete="name" required placeholder="请输入姓名"></label>
+                                <label><span>手机号</span><input name="phone" inputmode="tel" autocomplete="tel" required placeholder="11 位手机号"></label>
+                                <label class="full-field"><span>详细地址</span><textarea name="address" autocomplete="street-address" required placeholder="省 / 市 / 区 / 街道及门牌号"></textarea></label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <legend>支付方式</legend>
+                            <div class="payment-options">
+                                <label><input type="radio" name="payment" value="wechat" checked><span><i data-lucide="message-circle"></i>微信支付</span></label>
+                                <label><input type="radio" name="payment" value="alipay"><span><i data-lucide="scan-line"></i>支付宝</span></label>
+                                <label><input type="radio" name="payment" value="cod"><span><i data-lucide="banknote"></i>货到付款</span></label>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="checkout-review">
+                        <h3>订单摘要</h3>
+                        <div id="checkoutItems"></div>
+                        <div class="checkout-totals" id="checkoutTotals"></div>
+                        <button class="button button-dark" type="submit" id="placeOrder">
+                            提交订单
+                            <i data-lucide="lock-keyhole"></i>
+                        </button>
+                        <p class="form-error" id="checkoutError"></p>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <div class="modal-backdrop" id="successModal" aria-hidden="true">
+        <section class="success-modal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+            <div class="success-icon"><i data-lucide="check"></i></div>
+            <p class="eyebrow dark">ORDER CONFIRMED</p>
+            <h2 id="successTitle">订单已提交</h2>
+            <p>订单号 <strong id="successOrderNo"></strong></p>
+            <p class="success-note">我们已收到订单，稍后会通过手机同步配送进度。</p>
+            <div class="success-actions">
+                <button class="button button-dark" id="viewOrderButton" type="button">查看订单</button>
+                <button class="button button-outline" type="button" data-close-modal>继续购物</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="search-panel" id="searchPanel" aria-hidden="true">
+        <div class="search-panel-inner">
+            <i data-lucide="search"></i>
+            <input id="globalSearch" type="search" placeholder="搜索商品名称、品类或关键词" aria-label="全站搜索">
+            <button class="icon-button" id="searchClose" type="button" aria-label="关闭搜索"><i data-lucide="x"></i></button>
+        </div>
+        <div class="search-hints"><span>热门：</span><button type="button">耳机</button><button type="button">通勤</button><button type="button">家居</button></div>
+    </div>
+
+    <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Auth Modal (Login / Register) -->
+    <div class="modal-backdrop" id="authModal" aria-hidden="true">
+        <section class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+            <button class="icon-button modal-close" type="button" data-close-modal aria-label="关闭"><i data-lucide="x"></i></button>
+            <div class="auth-tabs">
+                <button class="auth-tab active" type="button" data-auth-tab="login">登录</button>
+                <button class="auth-tab" type="button" data-auth-tab="register">注册</button>
+            </div>
+            <!-- Login Form -->
+            <form class="auth-form active" id="loginForm">
+                <h2 id="authTitle" class="auth-heading">欢迎回来</h2>
+                <label class="auth-field">
+                    <span>用户名</span>
+                    <input type="text" name="username" autocomplete="username" required placeholder="请输入用户名" minlength="3" maxlength="20">
+                </label>
+                <label class="auth-field">
+                    <span>密码</span>
+                    <input type="password" name="password" autocomplete="current-password" required placeholder="请输入密码" minlength="6">
+                </label>
+                <p class="auth-error" id="loginError"></p>
+                <button class="button button-dark auth-submit" type="submit" id="loginSubmit">登录</button>
+                <p class="auth-hint">还没有账号？<button type="button" class="text-link" data-auth-tab="register">立即注册</button></p>
+            </form>
+            <!-- Register Form -->
+            <form class="auth-form" id="registerForm">
+                <h2 class="auth-heading">创建新账号</h2>
+                <label class="auth-field">
+                    <span>用户名</span>
+                    <input type="text" name="username" autocomplete="username" required placeholder="3-20个字符" minlength="3" maxlength="20">
+                </label>
+                <label class="auth-field">
+                    <span>邮箱</span>
+                    <input type="email" name="email" autocomplete="email" required placeholder="name@example.com">
+                </label>
+                <label class="auth-field">
+                    <span>密码</span>
+                    <input type="password" name="password" autocomplete="new-password" required placeholder="至少6个字符" minlength="6">
+                </label>
+                <p class="auth-error" id="registerError"></p>
+                <button class="button button-dark auth-submit" type="submit" id="registerSubmit">注册</button>
+                <p class="auth-hint">已有账号？<button type="button" class="text-link" data-auth-tab="login">去登录</button></p>
+            </form>
+        </section>
+    </div>
+
+    <!-- Personal Center Modal -->
+    <div class="modal-backdrop" id="profileModal" aria-hidden="true">
+        <section class="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+            <button class="icon-button modal-close" type="button" data-close-modal aria-label="关闭"><i data-lucide="x"></i></button>
+            <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar">U</div>
+                <div>
+                    <h2 id="profileTitle"></h2>
+                    <p id="profileEmail"></p>
+                </div>
+            </div>
+            <div class="profile-tabs">
+                <button class="profile-tab active" type="button" data-profile-tab="info">个人信息</button>
+                <button class="profile-tab" type="button" data-profile-tab="security">修改密码</button>
+                <button class="profile-tab" type="button" data-profile-tab="orders">我的订单</button>
+            </div>
+            <!-- Tab: Info -->
+            <div class="profile-pane active" id="profileInfo">
+                <label class="auth-field">
+                    <span>手机号</span>
+                    <input type="tel" name="phone" id="profilePhone" placeholder="请输入手机号" pattern="^1[3-9]\d{9}$">
+                </label>
+                <label class="auth-field">
+                    <span>头像URL</span>
+                    <input type="url" name="avatar" id="profileAvatarUrl" placeholder="https://...">
+                </label>
+                <button class="button button-dark auth-submit" type="button" id="profileSave">保存修改</button>
+            </div>
+            <!-- Tab: Security -->
+            <div class="profile-pane" id="profileSecurity">
+                <label class="auth-field">
+                    <span>原密码</span>
+                    <input type="password" id="oldPassword" placeholder="请输入原密码" required>
+                </label>
+                <label class="auth-field">
+                    <span>新密码</span>
+                    <input type="password" id="newPassword" placeholder="至少6个字符" required minlength="6">
+                </label>
+                <button class="button button-dark auth-submit" type="button" id="passwordSave">修改密码</button>
+            </div>
+            <!-- Tab: Orders -->
+            <div class="profile-pane" id="profileOrdersPane">
+                <div id="profileOrdersBody"></div>
+            </div>
+            <button class="button button-outline auth-logout" type="button" id="logoutButton">退出登录</button>
+        </section>
+    </div>
+
+    <!-- AI Shopping Assistant -->
+    <button class="ai-fab" id="aiFab" type="button" aria-label="AI购物助手">
+        <i data-lucide="sparkles"></i>
+    </button>
+    <aside class="ai-chat" id="aiChat" aria-hidden="true">
+        <div class="ai-chat-header">
+            <div class="ai-chat-title">
+                <i data-lucide="sparkles"></i>
+                <div><strong>小古 AI 助手</strong><small>您的智能购物顾问</small></div>
+            </div>
+            <div class="ai-chat-actions">
+                <button class="icon-button" type="button" id="aiSettings" aria-label="设置" title="设置"><i data-lucide="settings"></i></button>
+                <button class="icon-button" type="button" id="aiClose" aria-label="关闭" title="关闭"><i data-lucide="x"></i></button>
+            </div>
+        </div>
+        <div class="ai-chat-messages" id="aiMessages">
+            <div class="ai-welcome">
+                <i data-lucide="sparkles"></i>
+                <p>您好！我是小古，古德因纳夫商城的 AI 购物助手。告诉我您的需求，我来帮您挑选好物！</p>
+                <div class="ai-suggestions">
+                    <button type="button" class="ai-suggestion-chip">推荐热门商品</button>
+                    <button type="button" class="ai-suggestion-chip">有什么数码好物</button>
+                    <button type="button" class="ai-suggestion-chip">适合通勤的背包</button>
+                </div>
+            </div>
+        </div>
+        <div class="ai-chat-input">
+            <textarea id="aiInput" placeholder="输入您的需求，按 Enter 发送..." rows="1"></textarea>
+            <button class="ai-send" type="button" id="aiSend" aria-label="发送"><i data-lucide="send"></i></button>
+        </div>
+    </aside>
+
+    <!-- AI Settings Modal -->
+    <div class="modal-backdrop" id="aiSettingsModal" aria-hidden="true">
+        <section class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="aiSettingsTitle">
+            <button class="icon-button modal-close" type="button" data-close-modal aria-label="关闭"><i data-lucide="x"></i></button>
+            <h2 id="aiSettingsTitle" class="auth-heading">AI 助手设置</h2>
+            <p class="auth-hint">配置 DeepSeek API 密钥以启用 AI 对话功能。不配置则使用内置 Mock 模式。</p>
+            <label class="auth-field">
+                <span>DeepSeek API Key</span>
+                <input type="password" id="aiApiKey" placeholder="sk-..." autocomplete="off">
+            </label>
+            <p class="auth-error" id="aiKeyError"></p>
+            <button class="button button-dark auth-submit" type="button" id="aiKeySave">保存</button>
+            <p class="auth-hint">密钥仅存储在浏览器 localStorage，不会上传至任何第三方。</p>
+        </section>
+    </div>
+</body>
+</html>
