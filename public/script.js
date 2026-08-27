@@ -1,4 +1,4 @@
-const IMAGE_API = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image';
+const IMAGE_BASE = '/images';
 const API_BASE = 'http://localhost:3000/api';
 const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
 const STORAGE_KEYS = {
@@ -238,7 +238,11 @@ const elements = {};
 let revealObserver;
 
 function imageUrl(prompt, imageSize = 'square_hd') {
-    return `${IMAGE_API}?prompt=${encodeURIComponent(prompt)}&image_size=${imageSize}`;
+    return `${IMAGE_BASE}/fallback.jpg`;
+}
+
+function productImage(productId) {
+    return `${IMAGE_BASE}/products/${productId}.jpg`;
 }
 
 function loadStoredObject(key, fallback) {
@@ -310,14 +314,8 @@ function cacheElements() {
 }
 
 function setPageImages() {
-    elements.heroImage.src = imageUrl(
-        'wide editorial lifestyle photograph of a refined modern living room and work corner, visible sculptural lamp, premium headphones, ceramic mug and backpack as real products, warm daylight, off-white concrete, deep teal and coral accents, realistic high-end retail campaign photography, no text, no logo',
-        'landscape_16_9'
-    );
-    elements.editorialImage.src = imageUrl(
-        'overhead editorial still life of premium everyday objects on a large work table, mechanical keyboard, headphones, ceramic cup, fountain pen and desk lamp, warm natural sunlight, strong graphic shadows, coral teal and stainless steel accents, realistic retail photography, no text, no logo',
-        'landscape_4_3'
-    );
+    elements.heroImage.src = `${IMAGE_BASE}/hero.jpg`;
+    elements.editorialImage.src = `${IMAGE_BASE}/editorial.jpg`;
 }
 
 function getFilteredProducts() {
@@ -355,7 +353,7 @@ function productCardTemplate(product) {
     return `
         <article class="product-card reveal" data-product-id="${product.id}">
             <div class="product-media" data-action="details" tabindex="0" role="button" aria-label="查看 ${product.name} 详情">
-                <img src="${imageUrl(product.prompt)}" alt="${product.name}" loading="lazy">
+                <img src="${productImage(product.id)}" alt="${product.name}" loading="lazy">
                 ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
                 <button class="product-favorite${favorite ? ' active' : ''}" type="button" data-action="favorite" aria-label="${favorite ? '取消收藏' : '收藏'} ${product.name}" title="${favorite ? '取消收藏' : '收藏'}">
                     <i data-lucide="heart"></i>
@@ -504,7 +502,7 @@ function removeCartItem(productId) {
 function cartItemTemplate({ product, quantity }) {
     return `
         <li class="cart-item" data-product-id="${product.id}">
-            <img src="${imageUrl(product.prompt)}" alt="${product.name}">
+            <img src="${productImage(product.id)}" alt="${product.name}">
             <div class="cart-item-info">
                 <h3>${product.name}</h3>
                 <span>${CATEGORY_LABELS[product.category]} · 库存 ${product.stock}</span>
@@ -645,7 +643,7 @@ function openProduct(productId) {
     const product = getProduct(productId);
     if (!product) return;
     state.currentProductId = productId;
-    elements.detailImage.src = imageUrl(product.prompt);
+    elements.detailImage.src = productImage(product.id);
     elements.detailImage.alt = product.name;
     elements.detailCategory.textContent = `${CATEGORY_LABELS[product.category]} / ${product.badge || 'GOOD ENOUGH'}`;
     elements.detailTitle.textContent = product.name;
@@ -672,7 +670,7 @@ function renderCheckout() {
     const prices = totals();
     elements.checkoutItems.innerHTML = entries.map(({ product, quantity }) => `
         <div class="checkout-review-item">
-            <img src="${imageUrl(product.prompt)}" alt="${product.name}">
+            <img src="${productImage(product.id)}" alt="${product.name}">
             <span><strong>${product.name}</strong><small>数量 ${quantity}</small></span>
             <strong>${currency(product.price * quantity)}</strong>
         </div>
@@ -771,7 +769,7 @@ function orderCardTemplate(order) {
             <div class="order-card-head"><strong>${order.id}</strong><span>${order.status}</span></div>
             <time datetime="${order.createdAt}">${date}</time>
             <div class="order-products">
-                ${visible.map(({ product }) => `<img src="${imageUrl(product.prompt)}" alt="${product.name}" title="${product.name}">`).join('')}
+                ${visible.map(({ product }) => `<img src="${productImage(product.id)}" alt="${product.name}" title="${product.name}">`).join('')}
                 ${orderProducts.length > visible.length ? `<span class="order-more">+${orderProducts.length - visible.length}</span>` : ''}
             </div>
             <div class="order-card-foot"><span>共 ${order.items.reduce((sum, item) => sum + item.quantity, 0)} 件商品</span><strong>${currency(order.prices.total)}</strong></div>
@@ -1039,7 +1037,7 @@ function renderProfileOrders() {
         const product = firstItem ? getProduct(firstItem.id) : null;
         return `
             <div class="profile-order-item">
-                ${product ? `<img src="${imageUrl(product.prompt)}" alt="${product.name}">` : ''}
+                ${product ? `<img src="${productImage(product.id)}" alt="${product.name}">` : ''}
                 <div class="info">
                     <strong>${order.id}</strong>
                     <small>${order.status} · ${items.length} 件商品</small>
@@ -1120,7 +1118,7 @@ function renderAiMessageContent(text) {
             if (product) {
                 return `
                     <div class="ai-product-card" data-product-card="${product.id}" role="button" tabindex="0">
-                        <img src="${imageUrl(product.prompt)}" alt="${product.name}">
+                        <img src="${productImage(product.id)}" alt="${product.name}">
                         <div class="pcard-info">
                             <div class="pcard-name">${product.name}</div>
                             <div class="pcard-price">${currency(product.price)} <del>${currency(product.originalPrice)}</del></div>

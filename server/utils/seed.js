@@ -12,10 +12,8 @@ const users = require('../repositories/users');
 const productRepository = require('../repositories/products');
 const cart = require('../repositories/cart');
 
-const IMAGE_API = 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image';
-
 function productImage(prompt) {
-    return `${IMAGE_API}?prompt=${encodeURIComponent(prompt)}&image_size=square_hd`;
+    return '/images/fallback.jpg';
 }
 
 // 商品数据
