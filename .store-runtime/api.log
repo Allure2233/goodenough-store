@@ -1,0 +1,6 @@
+PostgreSQL connected: localhost:5432/goodenough (goodenough)
+API server: http://localhost:3000
+Health check: http://localhost:3000/api/health
+[0mGET /api/health [32m200[0m 4.147 ms - 214[0m
+[0mPOST /api/auth/register [32m200[0m 104.136 ms - 514[0m
+[0mPOST /api/ai/chat [32m200[0m 612.460 ms - -[0m
