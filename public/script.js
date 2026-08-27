@@ -241,13 +241,6 @@ function imageUrl(prompt, imageSize = 'square_hd') {
     return `${IMAGE_API}?prompt=${encodeURIComponent(prompt)}&image_size=${imageSize}`;
 }
 
-function productImage(product) {
-    if (product && product.id && ['ge-101','ge-102','ge-103','ge-104','ge-105','ge-106','ge-107','ge-108','ge-109','ge-110','ge-111','ge-112'].includes(product.id)) {
-        return `images/${product.id}.jpg`;
-    }
-    return imageUrl(product ? product.prompt : 'premium lifestyle product on warm neutral background, no text, no logo');
-}
-
 function loadStoredObject(key, fallback) {
     try {
         const value = JSON.parse(localStorage.getItem(key));
@@ -317,8 +310,14 @@ function cacheElements() {
 }
 
 function setPageImages() {
-    elements.heroImage.src = 'images/hero.jpg';
-    elements.editorialImage.src = 'images/editorial.jpg';
+    elements.heroImage.src = imageUrl(
+        'wide editorial lifestyle photograph of a refined modern living room and work corner, visible sculptural lamp, premium headphones, ceramic mug and backpack as real products, warm daylight, off-white concrete, deep teal and coral accents, realistic high-end retail campaign photography, no text, no logo',
+        'landscape_16_9'
+    );
+    elements.editorialImage.src = imageUrl(
+        'overhead editorial still life of premium everyday objects on a large work table, mechanical keyboard, headphones, ceramic cup, fountain pen and desk lamp, warm natural sunlight, strong graphic shadows, coral teal and stainless steel accents, realistic retail photography, no text, no logo',
+        'landscape_4_3'
+    );
 }
 
 function getFilteredProducts() {
@@ -356,7 +355,7 @@ function productCardTemplate(product) {
     return `
         <article class="product-card reveal" data-product-id="${product.id}">
             <div class="product-media" data-action="details" tabindex="0" role="button" aria-label="查看 ${product.name} 详情">
-                <img src="${productImage(product)}" alt="${product.name}" loading="lazy">
+                <img src="${imageUrl(product.prompt)}" alt="${product.name}" loading="lazy">
                 ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
                 <button class="product-favorite${favorite ? ' active' : ''}" type="button" data-action="favorite" aria-label="${favorite ? '取消收藏' : '收藏'} ${product.name}" title="${favorite ? '取消收藏' : '收藏'}">
                     <i data-lucide="heart"></i>
@@ -505,7 +504,7 @@ function removeCartItem(productId) {
 function cartItemTemplate({ product, quantity }) {
     return `
         <li class="cart-item" data-product-id="${product.id}">
-            <img src="${productImage(product)}" alt="${product.name}">
+            <img src="${imageUrl(product.prompt)}" alt="${product.name}">
             <div class="cart-item-info">
                 <h3>${product.name}</h3>
                 <span>${CATEGORY_LABELS[product.category]} · 库存 ${product.stock}</span>
@@ -646,7 +645,7 @@ function openProduct(productId) {
     const product = getProduct(productId);
     if (!product) return;
     state.currentProductId = productId;
-    elements.detailImage.src = productImage(product);
+    elements.detailImage.src = imageUrl(product.prompt);
     elements.detailImage.alt = product.name;
     elements.detailCategory.textContent = `${CATEGORY_LABELS[product.category]} / ${product.badge || 'GOOD ENOUGH'}`;
     elements.detailTitle.textContent = product.name;
@@ -673,7 +672,7 @@ function renderCheckout() {
     const prices = totals();
     elements.checkoutItems.innerHTML = entries.map(({ product, quantity }) => `
         <div class="checkout-review-item">
-            <img src="${productImage(product)}" alt="${product.name}">
+            <img src="${imageUrl(product.prompt)}" alt="${product.name}">
             <span><strong>${product.name}</strong><small>数量 ${quantity}</small></span>
             <strong>${currency(product.price * quantity)}</strong>
         </div>
@@ -772,7 +771,7 @@ function orderCardTemplate(order) {
             <div class="order-card-head"><strong>${order.id}</strong><span>${order.status}</span></div>
             <time datetime="${order.createdAt}">${date}</time>
             <div class="order-products">
-                ${visible.map(({ product }) => `<img src="${productImage(product)}" alt="${product.name}"` title="${product.name}">`).join('')}
+                ${visible.map(({ product }) => `<img src="${imageUrl(product.prompt)}" alt="${product.name}" title="${product.name}">`).join('')}
                 ${orderProducts.length > visible.length ? `<span class="order-more">+${orderProducts.length - visible.length}</span>` : ''}
             </div>
             <div class="order-card-foot"><span>共 ${order.items.reduce((sum, item) => sum + item.quantity, 0)} 件商品</span><strong>${currency(order.prices.total)}</strong></div>
@@ -1040,7 +1039,7 @@ function renderProfileOrders() {
         const product = firstItem ? getProduct(firstItem.id) : null;
         return `
             <div class="profile-order-item">
-                ${product ? `<img src="${productImage(product)}" alt="${product.name}">` : ''}
+                ${product ? `<img src="${imageUrl(product.prompt)}" alt="${product.name}">` : ''}
                 <div class="info">
                     <strong>${order.id}</strong>
                     <small>${order.status} · ${items.length} 件商品</small>
@@ -1121,7 +1120,7 @@ function renderAiMessageContent(text) {
             if (product) {
                 return `
                     <div class="ai-product-card" data-product-card="${product.id}" role="button" tabindex="0">
-                        <img src="${productImage(product)}" alt="${product.name}">
+                        <img src="${imageUrl(product.prompt)}" alt="${product.name}">
                         <div class="pcard-info">
                             <div class="pcard-name">${product.name}</div>
                             <div class="pcard-price">${currency(product.price)} <del>${currency(product.originalPrice)}</del></div>
@@ -1364,10 +1363,42 @@ function attachImageFallbacks(container) {
     container.querySelectorAll('img').forEach(image => {
         if (image.dataset.fallbackReady) return;
         image.dataset.fallbackReady = 'true';
+
+        const originalSrc = image.src;
+        let retryCount = 0;
+        const maxRetries = 2;
+        const timeoutMs = 15000;
+
+        const timeoutId = window.setTimeout(() => {
+            if (image.complete && image.naturalWidth > 0) return;
+            retryCount++;
+            if (retryCount <= maxRetries) {
+                image.src = originalSrc + (originalSrc.includes('&') ? '&_r=' : '&_r=') + retryCount + '_' + Date.now();
+                window.setTimeout(() => checkAgain(retryCount + 1), timeoutMs);
+            } else {
+                image.src = imageUrl('premium lifestyle retail product silhouette on warm neutral studio background, realistic ecommerce photography, soft shadow, no text, no logo');
+            }
+        }, timeoutMs);
+
+        function checkAgain(attempt) {
+            if (image.complete && image.naturalWidth > 0) return;
+            if (attempt <= maxRetries) {
+                image.src = originalSrc + '&_r=' + attempt + '_' + Date.now();
+                window.setTimeout(() => checkAgain(attempt + 1), timeoutMs);
+            } else {
+                image.src = imageUrl('premium lifestyle retail product silhouette on warm neutral studio background, realistic ecommerce photography, soft shadow, no text, no logo');
+            }
+        }
+
         image.addEventListener('error', () => {
             if (image.dataset.fallbackUsed) return;
             image.dataset.fallbackUsed = 'true';
-            image.src = 'images/fallback.jpg';
+            window.clearTimeout(timeoutId);
+            image.src = imageUrl('premium lifestyle retail product silhouette on a warm neutral studio background, realistic ecommerce photography, soft shadow, no text, no logo');
+        });
+
+        image.addEventListener('load', () => {
+            window.clearTimeout(timeoutId);
         });
     });
 }
