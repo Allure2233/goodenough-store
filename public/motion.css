@@ -1,0 +1,480 @@
+/* ============================================
+   动效与体验层（motion.css）
+   与 styles.css 的纸张/墨色编辑风保持一致
+   ============================================ */
+
+/* ---------- 渲染性能 ---------- */
+.editorial,
+.newsletter,
+.site-footer {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 700px;
+}
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-dark) var(--paper-deep);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--paper-deep);
+}
+
+::-webkit-scrollbar-thumb {
+    border: 2px solid var(--paper-deep);
+    border-radius: 6px;
+    background: var(--line-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--ink-soft);
+}
+
+/* ---------- 顶部滚动进度条 ---------- */
+.scroll-progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 1000;
+    height: 3px;
+    pointer-events: none;
+}
+
+.scroll-progress span {
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, var(--coral), var(--teal) 55%, var(--lime));
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    will-change: transform;
+}
+
+/* ---------- 顶栏智能隐藏 ---------- */
+.site-header {
+    transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-header.header-hidden {
+    transform: translateY(-100%);
+    box-shadow: none;
+}
+
+/* ---------- 返回顶部（带进度环） ---------- */
+.back-to-top {
+    position: fixed;
+    left: 22px;
+    bottom: 22px;
+    z-index: 800;
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 10px 26px rgba(23, 25, 26, 0.14);
+    opacity: 0;
+    transform: translateY(14px) scale(0.9);
+    pointer-events: none;
+    transition:
+        opacity 240ms ease,
+        transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+        background 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+}
+
+.back-to-top:hover {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: white;
+}
+
+.back-to-top > svg {
+    position: absolute;
+}
+
+.back-to-top > svg.ring {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.back-to-top > svg.lucide {
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    transform: translate(-50%, -50%);
+}
+
+.back-to-top circle {
+    fill: none;
+    stroke-width: 2.5;
+}
+
+.back-to-top .ring-bg {
+    stroke: var(--paper-deep);
+}
+
+.back-to-top .ring-fg {
+    stroke: var(--coral);
+    stroke-linecap: round;
+    stroke-dasharray: 125.66;
+    stroke-dashoffset: 125.66;
+}
+
+/* ---------- Hero 入场动画 ---------- */
+@keyframes hero-media-in {
+    from {
+        transform: scale(1.14) translateY(-1.5%);
+    }
+    to {
+        transform: scale(1.02) translateY(0);
+    }
+}
+
+@keyframes rise-in {
+    from {
+        opacity: 0;
+        transform: translateY(26px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fade-in-soft {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.hero-media img {
+    animation: hero-media-in 2.1s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.hero-shade {
+    animation: fade-in-soft 1s ease backwards;
+}
+
+.hero-content > * {
+    animation: rise-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.hero-content > .eyebrow {
+    animation-delay: 0.15s;
+}
+
+.hero-content > h1 {
+    animation-delay: 0.28s;
+}
+
+.hero-content > .hero-lead {
+    animation-delay: 0.42s;
+}
+
+.hero-content > .hero-actions {
+    animation-delay: 0.56s;
+}
+
+.hero-note {
+    animation: rise-in 0.9s 0.72s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+/* ---------- 滚动揭示扩展（方向变体 + 级联延迟） ---------- */
+.reveal {
+    transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal[data-reveal="left"] {
+    transform: translateX(-30px);
+}
+
+.reveal[data-reveal="right"] {
+    transform: translateX(30px);
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+}
+
+.product-grid > .reveal:nth-child(2) { --reveal-delay: 60ms; }
+.product-grid > .reveal:nth-child(3) { --reveal-delay: 120ms; }
+.product-grid > .reveal:nth-child(4) { --reveal-delay: 180ms; }
+.product-grid > .reveal:nth-child(5) { --reveal-delay: 240ms; }
+.product-grid > .reveal:nth-child(6) { --reveal-delay: 300ms; }
+.product-grid > .reveal:nth-child(7) { --reveal-delay: 360ms; }
+.product-grid > .reveal:nth-child(8) { --reveal-delay: 420ms; }
+
+.service-strip > .reveal:nth-child(2) { --reveal-delay: 80ms; }
+.service-strip > .reveal:nth-child(3) { --reveal-delay: 160ms; }
+.service-strip > .reveal:nth-child(4) { --reveal-delay: 240ms; }
+
+.newsletter form.reveal {
+    --reveal-delay: 120ms;
+}
+
+/* ---------- 区块标题下划线绘制 ---------- */
+.section-heading h2 {
+    padding-bottom: 10px;
+    background-image: linear-gradient(var(--coral), var(--coral));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0 3px;
+    transition: background-size 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
+}
+
+.section-heading.visible h2 {
+    background-size: 64px 3px;
+}
+
+/* ---------- 商品卡：3D 倾斜 + 光泽扫过 + 角标 ---------- */
+.product-media {
+    transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.product-media::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+        115deg,
+        transparent 32%,
+        rgba(255, 255, 255, 0.34) 48%,
+        rgba(255, 255, 255, 0.06) 58%,
+        transparent 70%
+    );
+    transform: translateX(-130%);
+}
+
+.product-card:hover .product-media::before {
+    transform: translateX(130%);
+    transition: transform 0.85s ease;
+}
+
+.product-badge {
+    transition: transform 200ms ease;
+}
+
+.product-card:hover .product-badge {
+    transform: translateY(-2px);
+}
+
+.product-media.media-loaded {
+    animation: none;
+    background: var(--paper-deep);
+}
+
+/* ---------- 图片加载揭示 ---------- */
+.img-reveal {
+    opacity: 0;
+    transform: scale(1.05);
+    filter: blur(8px);
+}
+
+.img-reveal.img-loaded {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+    transition:
+        opacity 0.45s ease,
+        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+        filter 0.45s ease;
+}
+
+/* ---------- 按钮：涟漪 + Hero 磁吸 ---------- */
+.button {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.42);
+    transform: scale(0);
+    pointer-events: none;
+}
+
+.button-outline .ripple,
+.button-light .ripple {
+    background: rgba(23, 25, 26, 0.14);
+}
+
+.hero-actions .button {
+    transform: translate(var(--mag-x, 0px), var(--mag-y, 0px));
+}
+
+.hero-actions .button:hover {
+    transform: translate(var(--mag-x, 0px), var(--mag-y, 0px)) translateY(-2px);
+}
+
+/* ---------- 购物车徽标弹跳 ---------- */
+@keyframes badge-pop {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.5); }
+    70% { transform: scale(0.92); }
+    100% { transform: scale(1); }
+}
+
+.count-badge.bounce {
+    animation: badge-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ---------- 购物车抽屉商品级联 ---------- */
+@keyframes cart-item-in {
+    from {
+        opacity: 0;
+        transform: translateX(26px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.cart-drawer.drawer-entering .cart-items > li {
+    animation: cart-item-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.cart-drawer.drawer-entering .cart-items > li:nth-child(1) { animation-delay: 0.05s; }
+.cart-drawer.drawer-entering .cart-items > li:nth-child(2) { animation-delay: 0.1s; }
+.cart-drawer.drawer-entering .cart-items > li:nth-child(3) { animation-delay: 0.15s; }
+.cart-drawer.drawer-entering .cart-items > li:nth-child(4) { animation-delay: 0.2s; }
+.cart-drawer.drawer-entering .cart-items > li:nth-child(5) { animation-delay: 0.25s; }
+.cart-drawer.drawer-entering .cart-items > li:nth-child(6) { animation-delay: 0.3s; }
+.cart-drawer.drawer-entering .cart-items > li:nth-child(n + 7) { animation-delay: 0.34s; }
+
+/* ---------- 收藏心形 ---------- */
+@keyframes heart-pop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+
+.product-favorite.pop svg {
+    animation: heart-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fav-particle {
+    position: fixed;
+    z-index: 1200;
+    color: var(--coral);
+    font-size: 12px;
+    line-height: 1;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+/* ---------- 飞入购物车的商品图 ---------- */
+.fly-img {
+    position: fixed;
+    z-index: 1500;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(23, 25, 26, 0.28);
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+/* ---------- Toast 图标弹入 ---------- */
+@keyframes toast-icon-pop {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
+
+.toast svg {
+    animation: toast-icon-pop 0.5s 0.08s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+/* ---------- 分类页签 / 加载更多 ---------- */
+.category-tab {
+    transition: background 180ms ease, color 180ms ease;
+}
+
+#loadMore svg {
+    transition: transform 0.25s ease;
+}
+
+#loadMore:hover svg {
+    transform: rotate(90deg);
+}
+
+/* ---------- AI 悬浮球呼吸 ---------- */
+@keyframes ai-fab-pulse {
+    0%, 100% {
+        box-shadow: 0 8px 24px rgba(228, 81, 63, 0.35), 0 0 0 0 rgba(228, 81, 63, 0.28);
+    }
+    50% {
+        box-shadow: 0 8px 24px rgba(228, 81, 63, 0.35), 0 0 0 14px rgba(228, 81, 63, 0);
+    }
+}
+
+.ai-fab {
+    animation: ai-fab-pulse 2.6s ease-in-out infinite;
+}
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 560px) {
+    .back-to-top {
+        left: 14px;
+        bottom: 16px;
+        width: 42px;
+        height: 42px;
+    }
+}
+
+/* ---------- 无障碍：减弱动效 ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .hero-media img,
+    .hero-content > *,
+    .hero-note,
+    .ai-fab {
+        animation: none;
+    }
+
+    .product-media {
+        transform: none;
+    }
+
+    .product-media::before {
+        display: none;
+    }
+}
+
+/* ---------- 打印 ---------- */
+@media print {
+    .scroll-progress,
+    .back-to-top,
+    .fly-img,
+    .fav-particle {
+        display: none !important;
+    }
+}

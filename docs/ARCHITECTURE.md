@@ -69,10 +69,10 @@ flowchart TD
 | 文件 | 职责 |
 | --- | --- |
 | `public/index.html` | 页面语义结构、抽屉、弹窗和表单容器 |
-| `public/styles.css` | 设计变量、布局、响应式规则和动效 |
+| `public/styles.css` | 设计变量、布局、响应式规则和基础动效 |
+| `public/motion.css` | 滚动进度、顶栏隐藏、入场编排、商品卡倾斜光泽等增强动效 |
 | `public/script.js` | 商品数据、页面状态、渲染、购物流程与事件绑定 |
-
-`public/three-effects.js`、`public/optimizations.js` 和 `public/optimizations.css` 是旧版遗留文件，当前首页没有加载。
+| `public/motion.js` | 滚动驱动 UI、数字滚动、飞入购物车、收藏爆裂等动效系统 |
 
 ### 3.2 状态模型
 

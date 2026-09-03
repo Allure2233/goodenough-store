@@ -6,11 +6,18 @@
     <meta name="description" content="古德因纳夫商城，精选服饰、数码、家居与配饰。">
     <meta name="theme-color" content="#f4f2ec">
     <title>古德因纳夫商城 | GOOD ENOUGH</title>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://s1.hdslb.com" crossorigin>
+    <link rel="preload" as="image" href="/images/hero.jpg" fetchpriority="high">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="motion.css">
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
     <script src="script.js" defer></script>
+    <script src="motion.js" defer></script>
 </head>
 <body>
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"><span></span></div>
+
     <div class="announcement">
         <span>本周精选</span>
         <p>满 300 元免运费，新用户使用 <strong>NEW10</strong> 立减 10%</p>
@@ -61,7 +68,7 @@
     <main>
         <section class="hero" id="home">
             <div class="hero-media">
-                <img id="heroImage" alt="现代家居空间中的精选生活好物">
+                <img id="heroImage" alt="现代家居空间中的精选生活好物" fetchpriority="high" decoding="async">
                 <div class="hero-shade"></div>
             </div>
             <div class="hero-inner">
@@ -87,26 +94,26 @@
         </section>
 
         <section class="service-strip" id="service" aria-label="购物保障">
-            <div>
+            <div class="reveal">
                 <i data-lucide="shield-check"></i>
                 <span><strong>正品保障</strong><small>官方渠道与严格质检</small></span>
             </div>
-            <div>
+            <div class="reveal">
                 <i data-lucide="truck"></i>
                 <span><strong>快速发货</strong><small>现货订单 24 小时内出库</small></span>
             </div>
-            <div>
+            <div class="reveal">
                 <i data-lucide="rotate-ccw"></i>
                 <span><strong>无忧退换</strong><small>签收后 7 天内可申请</small></span>
             </div>
-            <div>
+            <div class="reveal">
                 <i data-lucide="headphones"></i>
                 <span><strong>在线服务</strong><small>工作日 09:00-18:00</small></span>
             </div>
         </section>
 
         <section class="catalog-section" id="catalog">
-            <div class="section-heading">
+            <div class="section-heading reveal">
                 <div>
                     <p class="eyebrow dark">CURATED GOODS</p>
                     <h2>本周精选好物</h2>
@@ -114,7 +121,7 @@
                 <p>按真实使用场景筛选，每件商品都提供明确的材质、规格与库存信息。</p>
             </div>
 
-            <div class="catalog-toolbar">
+            <div class="catalog-toolbar reveal">
                 <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="商品分类">
                     <button class="category-tab active" type="button" data-category="all">全部</button>
                     <button class="category-tab" type="button" data-category="clothing">服饰</button>
@@ -168,17 +175,17 @@
         </section>
 
         <section class="editorial" id="edit">
-            <div class="editorial-image">
-                <img id="editorialImage" alt="桌面上的耳机、灯具与随身物件">
+            <div class="editorial-image reveal" data-reveal="left">
+                <img id="editorialImage" alt="桌面上的耳机、灯具与随身物件" loading="lazy" decoding="async">
             </div>
-            <div class="editorial-copy">
+            <div class="editorial-copy reveal" data-reveal="right">
                 <p class="eyebrow dark">WEEKLY EDIT 032</p>
                 <h2>让日常物件<br>各得其所</h2>
                 <p>我们偏爱结构清晰、触感诚实的设计。它们不喧哗，却能让每一次使用都更顺手。</p>
                 <dl>
-                    <div><dt>12</dt><dd>本周入选</dd></div>
-                    <div><dt>4.8</dt><dd>平均评分</dd></div>
-                    <div><dt>7 日</dt><dd>无忧退换</dd></div>
+                    <div><dt data-count="12">12</dt><dd>本周入选</dd></div>
+                    <div><dt data-count="4.8" data-count-decimals="1">4.8</dt><dd>平均评分</dd></div>
+                    <div><dt data-count="7" data-count-suffix=" 日">7 日</dt><dd>无忧退换</dd></div>
                 </dl>
                 <button class="button button-dark" type="button" data-category-jump="home">
                     选购家居好物
@@ -188,11 +195,11 @@
         </section>
 
         <section class="newsletter">
-            <div>
+            <div class="reveal">
                 <p class="eyebrow">GOOD NEWS, ONCE A WEEK</p>
                 <h2>每周一封精选清单</h2>
             </div>
-            <form id="newsletterForm">
+            <form id="newsletterForm" class="reveal">
                 <label>
                     <span class="sr-only">邮箱地址</span>
                     <input id="newsletterEmail" type="email" placeholder="name@example.com" required>
@@ -348,6 +355,14 @@
         </div>
         <div class="search-hints"><span>热门：</span><button type="button">耳机</button><button type="button">通勤</button><button type="button">家居</button></div>
     </div>
+
+    <button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部" title="回到顶部">
+        <svg class="ring" viewBox="0 0 46 46" aria-hidden="true">
+            <circle class="ring-bg" cx="23" cy="23" r="20"></circle>
+            <circle class="ring-fg" cx="23" cy="23" r="20"></circle>
+        </svg>
+        <i data-lucide="arrow-up"></i>
+    </button>
 
     <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
 

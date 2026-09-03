@@ -236,6 +236,22 @@ const state = {
 
 const elements = {};
 let revealObserver;
+let lastCartCount = null;
+
+function debounce(fn, wait = 180) {
+    let timer;
+    return (...args) => {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => fn(...args), wait);
+    };
+}
+
+function notifyCartAdd(productId, rect) {
+    const product = getProduct(productId);
+    document.dispatchEvent(new CustomEvent('store:cart-add', {
+        detail: { productId, rect, imgSrc: product ? productImage(product.id) : '' }
+    }));
+}
 
 function imageUrl(prompt, imageSize = 'square_hd') {
     return `${IMAGE_BASE}/fallback.jpg`;
@@ -527,6 +543,11 @@ function renderCart() {
     const entries = cartEntries();
     const count = cartCount();
     const prices = totals();
+
+    if (lastCartCount !== null && count !== lastCartCount) {
+        document.dispatchEvent(new CustomEvent('store:cart-changed', { detail: { count } }));
+    }
+    lastCartCount = count;
 
     elements.cartCount.textContent = count > 99 ? '99+' : count;
     elements.drawerCartCount.textContent = count;
@@ -1362,42 +1383,29 @@ function attachImageFallbacks(container) {
         if (image.dataset.fallbackReady) return;
         image.dataset.fallbackReady = 'true';
 
-        const originalSrc = image.src;
-        let retryCount = 0;
-        const maxRetries = 2;
-        const timeoutMs = 15000;
-
-        const timeoutId = window.setTimeout(() => {
-            if (image.complete && image.naturalWidth > 0) return;
-            retryCount++;
-            if (retryCount <= maxRetries) {
-                image.src = originalSrc + (originalSrc.includes('&') ? '&_r=' : '&_r=') + retryCount + '_' + Date.now();
-                window.setTimeout(() => checkAgain(retryCount + 1), timeoutMs);
-            } else {
-                image.src = imageUrl('premium lifestyle retail product silhouette on warm neutral studio background, realistic ecommerce photography, soft shadow, no text, no logo');
-            }
-        }, timeoutMs);
-
-        function checkAgain(attempt) {
-            if (image.complete && image.naturalWidth > 0) return;
-            if (attempt <= maxRetries) {
-                image.src = originalSrc + '&_r=' + attempt + '_' + Date.now();
-                window.setTimeout(() => checkAgain(attempt + 1), timeoutMs);
-            } else {
-                image.src = imageUrl('premium lifestyle retail product silhouette on warm neutral studio background, realistic ecommerce photography, soft shadow, no text, no logo');
-            }
+        if (image.complete && image.naturalWidth === 0) {
+            image.src = imageUrl();
+            return;
         }
 
+        let retried = false;
         image.addEventListener('error', () => {
-            if (image.dataset.fallbackUsed) return;
-            image.dataset.fallbackUsed = 'true';
-            window.clearTimeout(timeoutId);
-            image.src = imageUrl('premium lifestyle retail product silhouette on a warm neutral studio background, realistic ecommerce photography, soft shadow, no text, no logo');
+            if (image.dataset.usingFallback) return;
+            if (!retried) {
+                retried = true;
+                image.src = `${image.src}${image.src.includes('?') ? '&' : '?'}_r=${Date.now()}`;
+            } else {
+                image.dataset.usingFallback = 'true';
+                image.src = imageUrl();
+            }
         });
 
-        image.addEventListener('load', () => {
-            window.clearTimeout(timeoutId);
-        });
+        const hangTimer = image.complete
+            ? null
+            : window.setTimeout(() => {
+                if (!(image.complete && image.naturalWidth > 0)) image.src = imageUrl();
+            }, 12000);
+        image.addEventListener('load', () => window.clearTimeout(hangTimer), { once: true });
     });
 }
 
@@ -1468,7 +1476,7 @@ function bindEvents() {
         button.addEventListener('click', () => setCategory(button.dataset.categoryJump, true));
     });
 
-    elements.catalogSearch.addEventListener('input', event => applySearch(event.target.value));
+    elements.catalogSearch.addEventListener('input', debounce(event => applySearch(event.target.value)));
     elements.sortSelect.addEventListener('change', event => {
         state.sort = event.target.value;
         renderProducts();
@@ -1491,8 +1499,20 @@ function bindEvents() {
         const card = event.target.closest('[data-product-id]');
         const action = event.target.closest('[data-action]')?.dataset.action;
         if (!card || !action) return;
-        if (action === 'favorite') toggleFavorite(card.dataset.productId);
-        if (action === 'add') addToCart(card.dataset.productId);
+        if (action === 'favorite') {
+            toggleFavorite(card.dataset.productId);
+            const favoriteButton = elements.productGrid.querySelector(
+                `[data-product-id="${card.dataset.productId}"] .product-favorite`
+            );
+            document.dispatchEvent(new CustomEvent('store:favorite', {
+                detail: { btn: favoriteButton, active: state.favorites.includes(card.dataset.productId) }
+            }));
+        }
+        if (action === 'add') {
+            const image = card.querySelector('.product-media img');
+            notifyCartAdd(card.dataset.productId, image?.getBoundingClientRect());
+            addToCart(card.dataset.productId);
+        }
         if (action === 'details') openProduct(card.dataset.productId);
     });
     elements.productGrid.addEventListener('keydown', event => {
@@ -1539,6 +1559,7 @@ function bindEvents() {
         elements.detailQuantity.value = String(Math.max(1, Math.min(10, value)));
     });
     elements.detailAdd.addEventListener('click', () => {
+        notifyCartAdd(state.currentProductId, elements.detailImage.getBoundingClientRect());
         addToCart(state.currentProductId, Number.parseInt(elements.detailQuantity.value, 10) || 1);
         closeModal(elements.productModal);
         openDrawer(elements.cartDrawer);
@@ -1561,7 +1582,7 @@ function bindEvents() {
 
     elements.searchToggle.addEventListener('click', openSearch);
     elements.searchClose.addEventListener('click', closeSearch);
-    elements.globalSearch.addEventListener('input', event => applySearch(event.target.value));
+    elements.globalSearch.addEventListener('input', debounce(event => applySearch(event.target.value)));
     elements.globalSearch.addEventListener('keydown', event => {
         if (event.key === 'Enter') applySearch(event.target.value, true);
     });
