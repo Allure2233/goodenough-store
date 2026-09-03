@@ -1,6 +1,7 @@
 // ============================================
 // 动效系统（motion.js）
-// 依赖 script.js 先行执行；关键交互通过 store:* 自定义事件解耦
+// 基于 anime.js v3（CDN）；依赖 script.js 先行执行
+// 关键交互通过 store:* 自定义事件解耦；anime 未加载时动效降级
 // ============================================
 
 (() => {
@@ -10,6 +11,7 @@
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const animeLib = window.anime || null;
 
     const header = document.getElementById('siteHeader');
     const mobileMenu = document.getElementById('mobileMenu');
@@ -122,19 +124,20 @@
         if (Number.isNaN(target)) return;
         const decimals = Number.parseInt(el.dataset.countDecimals || '0', 10);
         const suffix = el.dataset.countSuffix || '';
-        if (reducedMotion) {
+        if (reducedMotion || !animeLib) {
             el.textContent = target.toFixed(decimals) + suffix;
             return;
         }
-        const duration = 1100;
-        const start = performance.now();
-        const step = now => {
-            const t = Math.min(1, (now - start) / duration);
-            const eased = 1 - (1 - t) ** 3;
-            el.textContent = (target * eased).toFixed(decimals) + suffix;
-            if (t < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
+        const proxy = { val: 0 };
+        animeLib({
+            targets: proxy,
+            val: target,
+            duration: 1100,
+            easing: 'easeOutCubic',
+            update: () => {
+                el.textContent = proxy.val.toFixed(decimals) + suffix;
+            }
+        });
     }
 
     /* ---------- 商品卡 3D 倾斜 ---------- */
@@ -174,7 +177,7 @@
     /* ---------- 按钮涟漪 ---------- */
     document.addEventListener('pointerdown', event => {
         const button = event.target?.closest?.('.button');
-        if (!button || reducedMotion) return;
+        if (!button || reducedMotion || !animeLib) return;
         const rect = button.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height) * 1.1;
         const ripple = document.createElement('span');
@@ -183,19 +186,24 @@
         ripple.style.left = `${event.clientX - rect.left - size / 2}px`;
         ripple.style.top = `${event.clientY - rect.top - size / 2}px`;
         button.appendChild(ripple);
-        ripple.animate(
-            [
-                { transform: 'scale(0)', opacity: 0.55 },
-                { transform: 'scale(1)', opacity: 0 }
-            ],
-            { duration: 550, easing: 'ease-out' }
-        ).onfinish = () => ripple.remove();
+        animeLib({
+            targets: ripple,
+            scale: [0, 1],
+            opacity: [0.55, 0],
+            duration: 550,
+            easing: 'easeOutQuad',
+            complete: () => ripple.remove()
+        });
     });
 
     /* ---------- Hero 按钮磁吸 ---------- */
     if (finePointer && !reducedMotion) {
         document.querySelectorAll('.hero-actions .button').forEach(button => {
             button.addEventListener('pointermove', event => {
+                if (animeLib) {
+                    animeLib.remove(button);
+                    button.style.transform = '';
+                }
                 const rect = button.getBoundingClientRect();
                 const mx = (event.clientX - rect.left - rect.width / 2) * 0.12;
                 const my = (event.clientY - rect.top - rect.height / 2) * 0.24;
@@ -203,8 +211,19 @@
                 button.style.setProperty('--mag-y', `${my.toFixed(1)}px`);
             });
             button.addEventListener('pointerleave', () => {
-                button.style.setProperty('--mag-x', '0px');
-                button.style.setProperty('--mag-y', '0px');
+                if (animeLib) {
+                    animeLib({
+                        targets: button,
+                        translateX: 0,
+                        translateY: 0,
+                        duration: 650,
+                        easing: 'spring(1, 80, 10, 0)',
+                        complete: () => { button.style.transform = ''; }
+                    });
+                } else {
+                    button.style.setProperty('--mag-x', '0px');
+                    button.style.setProperty('--mag-y', '0px');
+                }
             });
         });
     }
@@ -263,20 +282,33 @@
         ghost.style.height = `${rect.height}px`;
         document.body.appendChild(ghost);
 
+        if (!animeLib) {
+            ghost.remove();
+            bounceCartBadge();
+            return;
+        }
+
         const dx = targetRect.left + targetRect.width / 2 - (rect.left + rect.width / 2);
         const dy = targetRect.top + targetRect.height / 2 - (rect.top + rect.height / 2);
 
-        ghost.animate(
-            [
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${dx * 0.55}px, ${dy * 0.55 - 80}px) scale(0.5)`, opacity: 0.95, offset: 0.55 },
-                { transform: `translate(${dx}px, ${dy}px) scale(0.12)`, opacity: 0.35 }
+        // X 轴单向飞出，Y 轴两段先扬后落形成弧线，整体缩小淡出
+        animeLib({
+            targets: ghost,
+            translateX: { value: dx, duration: 780, easing: 'easeOutCubic' },
+            translateY: [
+                { value: dy * 0.4 - 90, duration: 330, easing: 'easeOutQuad' },
+                { value: dy, duration: 450, easing: 'easeInQuad' }
             ],
-            { duration: 750, easing: 'cubic-bezier(0.45, 0, 0.3, 1)' }
-        ).onfinish = () => {
-            ghost.remove();
-            bounceCartBadge();
-        };
+            scale: { value: 0.12, duration: 780, easing: 'easeInQuad' },
+            opacity: [
+                { value: 0.95, duration: 380, easing: 'linear' },
+                { value: 0.3, duration: 400, easing: 'linear' }
+            ],
+            complete: () => {
+                ghost.remove();
+                bounceCartBadge();
+            }
+        });
     }
 
     /* ---------- 收藏心形爆裂 ---------- */
@@ -290,30 +322,33 @@
     });
 
     function heartBurst(button) {
+        if (!animeLib) return;
         const rect = button.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
 
-        for (let i = 0; i < 8; i++) {
+        const particles = Array.from({ length: 8 }, () => {
             const particle = document.createElement('span');
             particle.className = 'fav-particle';
             particle.textContent = '♥';
             particle.style.left = `${cx}px`;
             particle.style.top = `${cy}px`;
             document.body.appendChild(particle);
+            return particle;
+        });
 
-            const angle = (Math.PI * 2 * i) / 8 + Math.random() * 0.5;
-            const distance = 30 + Math.random() * 20;
-            particle.animate(
-                [
-                    { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
-                    {
-                        transform: `translate(calc(-50% + ${(Math.cos(angle) * distance).toFixed(1)}px), calc(-50% + ${(Math.sin(angle) * distance).toFixed(1)}px)) scale(0.2)`,
-                        opacity: 0
-                    }
-                ],
-                { duration: 620, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
-            ).onfinish = () => particle.remove();
-        }
+        const angles = particles.map((_, i) => (Math.PI * 2 * i) / 8 + Math.random() * 0.5);
+        const distances = particles.map(() => 32 + Math.random() * 20);
+
+        animeLib({
+            targets: particles,
+            translateX: (el, i) => Math.cos(angles[i]) * distances[i],
+            translateY: (el, i) => Math.sin(angles[i]) * distances[i],
+            scale: [1, 0.2],
+            opacity: [1, 0],
+            duration: 620,
+            easing: 'easeOutCubic',
+            complete: () => particles.forEach(particle => particle.remove())
+        });
     }
 })();

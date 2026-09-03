@@ -389,6 +389,7 @@ html {
     color: var(--coral);
     font-size: 12px;
     line-height: 1;
+    translate: -50% -50%;
     pointer-events: none;
     will-change: transform, opacity;
 }

@@ -72,7 +72,7 @@ flowchart TD
 | `public/styles.css` | 设计变量、布局、响应式规则和基础动效 |
 | `public/motion.css` | 滚动进度、顶栏隐藏、入场编排、商品卡倾斜光泽等增强动效 |
 | `public/script.js` | 商品数据、页面状态、渲染、购物流程与事件绑定 |
-| `public/motion.js` | 滚动驱动 UI、数字滚动、飞入购物车、收藏爆裂等动效系统 |
+| `public/motion.js` | 滚动驱动 UI、数字滚动、飞入购物车、收藏爆裂等动效系统（基于 anime.js v3 CDN） |
 
 ### 3.2 状态模型
 
